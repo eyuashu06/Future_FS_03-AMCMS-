@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
 import { Component } from 'react';
+import { withTranslation } from 'react-i18next';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class ErrorBoundary extends Component {
         <div className="flex items-center justify-center min-h-screen p-8 bg-background">
           <div className="flex flex-col items-center w-full max-w-2xl p-8">
             <AlertTriangle size={48} className="text-destructive mb-6 flex-shrink-0" />
-            <h2 className="text-xl mb-4">An unexpected error occurred.</h2>
+            <h2 className="text-xl mb-4">{this.props.t('common.unexpectedError')}</h2>
             <div className="p-4 w-full rounded bg-muted overflow-auto mb-6">
               <pre className="text-sm text-muted-foreground whitespace-break-spaces">
                 {this.state.error?.stack}
@@ -33,7 +34,7 @@ class ErrorBoundary extends Component {
               )}
             >
               <RotateCcw size={16} />
-              Reload Page
+              {this.props.t('common.reloadPage')}
             </button>
           </div>
         </div>
@@ -43,4 +44,4 @@ class ErrorBoundary extends Component {
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation()(ErrorBoundary);
