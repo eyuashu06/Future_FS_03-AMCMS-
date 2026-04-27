@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
+import { useTranslation } from 'react-i18next';
 import { Menu, X, LogIn, User, LayoutDashboard, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,18 +17,24 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
+  const { t, i18n } = useTranslation();
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
-    { label: 'Services', href: '/services' },
-    { label: 'Contact', href: '/contact' },
+    { label: t('navbar.home'), href: '/' },
+    { label: t('navbar.about'), href: '/about' },
+    { label: t('navbar.services'), href: '/services' },
+    { label: t('navbar.contact'), href: '/contact' },
   ];
 
   const handleLogout = () => {
     logout();
     setLocation('/login');
     setIsOpen(false);
+  };
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language.startsWith('en') ? 'am' : 'en';
+    i18n.changeLanguage(newLang);
   };
 
   return (
@@ -39,8 +46,8 @@ export default function Navbar() {
             AG
           </div>
           <div className="hidden sm:block">
-            <p className="text-lg font-bold text-foreground">Abebech Gobena</p>
-            <p className="text-xs text-muted-foreground">Medical Clinic</p>
+            <p className="text-lg font-bold text-foreground">{t('common.abebechGobena')}</p>
+            <p className="text-xs text-muted-foreground">{t('common.medicalClinic')}</p>
           </div>
         </Link>
 
@@ -75,31 +82,36 @@ export default function Navbar() {
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
-                        <LayoutDashboard size={16} /> Admin Dashboard
+                        <LayoutDashboard size={16} /> {t('navbar.adminDashboard')}
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
                     <Link href="/appointment" className="flex items-center gap-2 cursor-pointer">
-                      <User size={16} /> My Appointments
+                      <User size={16} /> {t('navbar.myAppointments')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
-                    <LogOut size={16} className="mr-2" /> Log out
+                    <LogOut size={16} className="mr-2" /> {t('navbar.logOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/login">
                 <Button variant="outline" className="flex items-center gap-2">
-                  <LogIn size={18} /> Sign In
+                  <LogIn size={18} /> {t('navbar.signIn')}
                 </Button>
               </Link>
             )}
             
+            {/* Language Switcher */}
+            <Button variant="ghost" onClick={toggleLanguage} className="font-semibold text-base text-accent uppercase w-12 cursor-pointer">
+               {i18n.language.startsWith('en') ? 'አማ' : 'EN'}
+            </Button>
+
             <Link href="/appointment" className="cta-button text-sm">
-              Book Appointment
+              {t('navbar.bookAppointment')}
             </Link>
           </div>
         </div>
@@ -146,14 +158,14 @@ export default function Navbar() {
                     className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-accent"
                     onClick={() => setIsOpen(false)}
                   >
-                    <LayoutDashboard size={18} /> Admin Dashboard
+                    <LayoutDashboard size={18} /> {t('navbar.adminDashboard')}
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 text-sm font-medium text-destructive"
                 >
-                  <LogOut size={18} /> Log Out
+                  <LogOut size={18} /> {t('navbar.logOut')}
                 </button>
               </>
             ) : (
@@ -162,17 +174,22 @@ export default function Navbar() {
                 className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-accent"
                 onClick={() => setIsOpen(false)}
               >
-                <LogIn size={18} /> Sign In
+                <LogIn size={18} /> {t('navbar.signIn')}
               </Link>
             )}
             
-            <Link
-              href="/appointment"
-              className="cta-button text-sm text-center"
-              onClick={() => setIsOpen(false)}
-            >
-              Book Appointment
-            </Link>
+            <div className="flex gap-4 pt-2">
+              <Button onClick={toggleLanguage} variant="outline" className="flex-1 font-semibold text-accent uppercase">
+                {i18n.language.startsWith('en') ? 'አማርኛ' : 'English'}
+              </Button>
+              <Link
+                href="/appointment"
+                className="cta-button text-sm text-center flex-1"
+                onClick={() => setIsOpen(false)}
+              >
+                {t('navbar.bookAppointment')}
+              </Link>
+            </div>
           </div>
         </div>
       )}
