@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { UserPlus, Mail, Lock, Phone, User, LogIn } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -26,7 +28,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      return toast.error('Passwords do not match');
+      return toast.error(t('auth.passwordsNoMatch'));
     }
 
     setIsLoading(true);
@@ -39,13 +41,13 @@ export default function Register() {
       });
 
       if (result.success) {
-        toast.success('Account created successfully! Welcome.');
+        toast.success(t('auth.accountCreated'));
         setLocation('/appointment');
       } else {
         toast.error(result.message);
       }
     } catch (err) {
-      toast.error('An error occurred during registration');
+      toast.error(t('auth.regErr'));
     } finally {
       setIsLoading(false);
     }
@@ -59,17 +61,17 @@ export default function Register() {
             <UserPlus className="w-8 h-8 text-accent" />
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Create an account
+            {t('auth.createAccount')}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Join Abebech Gobena Medical Clinic today
+            {t('auth.createDetails')}
           </p>
         </div>
 
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name">{t('auth.fullName')}</Label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -87,7 +89,7 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email">{t("auth.email_label")}</Label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -105,7 +107,7 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t('auth.phone')}</Label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Phone className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -124,7 +126,7 @@ export default function Register() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -141,7 +143,7 @@ export default function Register() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="confirmPassword">Confirm</Label>
+                <Label htmlFor="confirmPassword">{t("auth.confirmPassword")}</Label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -169,23 +171,23 @@ export default function Register() {
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                  Creating account...
+                  ...
                 </div>
               ) : (
-                'Create Account'
+                t('auth.signUp')
               )}
             </Button>
           </div>
           
           <div className="text-center mt-4">
             <p className="text-sm text-muted-foreground">
-              Already have an account?{' '}
+              {t('auth.haveAccount')}{' '}
               <button
                 type="button"
                 onClick={() => setLocation('/login')}
                 className="font-medium text-accent hover:text-accent/80 transition-colors inline-flex items-center gap-1"
               >
-                <LogIn size={16} /> Sign in instead
+                <LogIn size={16} /> {t('auth.signInInstead')}
               </button>
             </p>
           </div>
