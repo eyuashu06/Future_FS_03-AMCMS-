@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
+import { useTranslation } from 'react-i18next';
 import { 
   BarChart3, 
   Users, 
@@ -21,16 +22,17 @@ export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const menuItems = [
-    { label: 'Overview', icon: BarChart3, href: '/dashboard' },
-    { label: 'Patients', icon: Users, href: '/dashboard/patients' },
-    { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments' },
-    { label: 'Booking Requests', icon: ClipboardList, href: '/dashboard/requests' },
-    { label: 'Payments / Billing', icon: CreditCard, href: '/dashboard/payments' },
-    { label: 'Doctors / Staff', icon: UserCog, href: '/dashboard/staff' },
-    { label: 'Reports', icon: BarChart3, href: '/dashboard/reports' },
-    { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
+    { label: t('dashboard.overview'), icon: BarChart3, href: '/dashboard' },
+    { label: t('dashboard.patients'), icon: Users, href: '/dashboard/patients' },
+    { label: t('dashboard.appointments'), icon: Calendar, href: '/dashboard/appointments' },
+    { label: t('dashboard.bookingRequests'), icon: ClipboardList, href: '/dashboard/requests' },
+    { label: t('dashboard.paymentsBilling'), icon: CreditCard, href: '/dashboard/payments' },
+    { label: t('dashboard.doctorsStaff'), icon: UserCog, href: '/dashboard/staff' },
+    { label: t('dashboard.reports'), icon: BarChart3, href: '/dashboard/reports' },
+    { label: t('dashboard.settings'), icon: Settings, href: '/dashboard/settings' },
   ];
 
   const isActive = (href) => {
@@ -53,7 +55,7 @@ export default function DashboardLayout({ children }) {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground font-bold">
                 AG
               </div>
-              <span className="text-xl font-bold text-foreground">Clinic Admin</span>
+              <span className="text-xl font-bold text-foreground">{t('dashboard.admin')}</span>
             </Link>
             <button className="md:hidden" onClick={() => setIsSidebarOpen(false)}>
               <X size={20} />
@@ -85,7 +87,7 @@ export default function DashboardLayout({ children }) {
               className="flex items-center gap-3 w-full px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
             >
               <LogOut size={20} />
-              <span>Sign Out</span>
+              <span>{t('dashboard.signOut')}</span>
             </button>
           </div>
         </div>
@@ -100,7 +102,7 @@ export default function DashboardLayout({ children }) {
           
           <div className="flex-1 px-4 hidden md:block">
             <h1 className="text-lg font-semibold text-foreground truncate">
-              {menuItems.find(item => isActive(item.href))?.label || 'Dashboard'}
+              {menuItems.find(item => isActive(item.href))?.label || t('dashboard.overview')}
             </h1>
           </div>
 
