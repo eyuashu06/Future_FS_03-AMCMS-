@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Calendar, 
   Search, 
@@ -25,6 +26,7 @@ export default function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchAppointments();
@@ -37,7 +39,7 @@ export default function Appointments() {
         setAppointments(res.data.data);
       }
     } catch (err) {
-      toast.error('Failed to load appointments');
+      toast.error(t('dashboard.failedLoadAppointments'));
     } finally {
       setLoading(false);
     }
@@ -47,24 +49,25 @@ export default function Appointments() {
     try {
       const res = await api.patch(`/admin/appointments/${id}/status`, { status });
       if (res.data.success) {
-        toast.success(`Appointment ${status} successfully`);
+        toast.success(t('dashboard.appointmentStatusSuccess'));
         fetchAppointments();
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to update status');
+      toast.error(err.message || t('dashboard.failedUpdateStatus'));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
-    try {
-      const res = await api.delete(`/admin/appointments/${id}`);
-      if (res.data.success) {
-        toast.success('Appointment deleted');
-        fetchAppointments();
+    if (window.confirm(t('dashboard.confirmDeleteAppointment'))) {
+      try {
+        const res = await api.delete(`/admin/appointments/${id}`);
+        if (res.data.success) {
+          toast.success(t('dashboard.appointmentDeleted'));
+          fetchAppointments();
+        }
+      } catch (err) {
+        toast.error(t('dashboard.failedDeleteAppointment'));
       }
-    } catch (err) {
-      toast.error('Failed to delete appointment');
     }
   };
 
@@ -83,7 +86,7 @@ export default function Appointments() {
     }
   };
 
-  if (loading) return <div className="p-10 text-center">Loading appointments...</div>;
+  if (loading) return <div className="p-10 text-center">{t('dashboard.loadingAppointments')}</div>;
 
   return (
     <div className="space-y-6">
@@ -91,15 +94,15 @@ export default function Appointments() {
         <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <Input 
-            placeholder="Search by patient or service..." 
+            placeholder={t('dashboard.searchByPatientOrService')}
             className="pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline"><Filter size={18} className="mr-2" /> Filter</Button>
-          <Button className="cta-button">New Appointment</Button>
+          <Button variant="outline"><Filter size={18} className="mr-2" /> {t('dashboard.filter')}</Button>
+          <Button className="cta-button">{t('dashboard.newAppointment')}</Button>
         </div>
       </div>
 
@@ -108,11 +111,11 @@ export default function Appointments() {
           <table className="w-full text-left">
             <thead className="bg-muted/50 text-xs uppercase text-muted-foreground font-semibold">
               <tr>
-                <th className="px-6 py-4">Patient</th>
-                <th className="px-6 py-4">Service</th>
-                <th className="px-6 py-4">Date & Time</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">{t('dashboard.patient')}</th>
+                <th className="px-6 py-4">{t('dashboard.service')}</th>
+                <th className="px-6 py-4">{t('dashboard.dateAndTime')}</th>
+                <th className="px-6 py-4">{t('dashboard.status')}</th>
+                <th className="px-6 py-4 text-right">{t('dashboard.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -128,7 +131,7 @@ export default function Appointments() {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(app.status)}`}>
-                      {app.status}
+                      {app.status === 'confirmed' ? t('dashboard.statusConfirmed') : app.status === 'pending' ? t('dashboard.statusPending') : app.status === 'completed' ? t('dashboard.statusCompleted') : app.status === 'cancelled' ? t('dashboard.statusCancelled') : app.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -140,19 +143,19 @@ export default function Appointments() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleStatusUpdate(app.id, 'confirmed')} className="cursor-pointer">
-                          <CheckCircle size={14} className="mr-2 text-emerald-600" /> Confirm
+                          <CheckCircle size={14} className="mr-2 text-emerald-600" /> {t('dashboard.confirm')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusUpdate(app.id, 'cancelled')} className="cursor-pointer">
-                          <XCircle size={14} className="mr-2 text-destructive" /> Cancel
+                          <XCircle size={14} className="mr-2 text-destructive" /> {t('dashboard.cancel')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusUpdate(app.id, 'completed')} className="cursor-pointer text-blue-600">
-                          <CheckCircle size={14} className="mr-2" /> Mark Completed
+                          <CheckCircle size={14} className="mr-2" /> {t('dashboard.markCompleted')}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer">
-                          <ExternalLink size={14} className="mr-2" /> View Details
+                          <ExternalLink size={14} className="mr-2" /> {t('dashboard.viewDetails')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDelete(app.id)} className="cursor-pointer text-destructive">
-                          <Trash2 size={14} className="mr-2" /> Delete
+                          <Trash2 size={14} className="mr-2" /> {t('dashboard.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -162,7 +165,7 @@ export default function Appointments() {
               {filteredAppointments.length === 0 && (
                 <tr>
                   <td colSpan="5" className="px-6 py-10 text-center text-muted-foreground">
-                    No appointments found.
+                    {t('dashboard.noAppointmentsFound')}
                   </td>
                 </tr>
               )}
