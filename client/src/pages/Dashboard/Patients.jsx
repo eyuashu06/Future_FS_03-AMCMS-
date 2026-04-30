@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, 
   Search, 
@@ -23,6 +24,7 @@ export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -32,7 +34,7 @@ export default function Patients() {
           setPatients(res.data.data);
         }
       } catch (err) {
-        toast.error('Failed to load patients');
+        toast.error(t('dashboard.failedLoadPatients'));
       } finally {
         setLoading(false);
       }
@@ -46,7 +48,7 @@ export default function Patients() {
     p.phone?.includes(searchTerm)
   );
 
-  if (loading) return <div className="p-10 text-center">Loading patients...</div>;
+  if (loading) return <div className="p-10 text-center">{t('dashboard.loadingPatients')}</div>;
 
   return (
     <div className="space-y-6">
@@ -54,14 +56,14 @@ export default function Patients() {
         <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <Input 
-            placeholder="Search patients by name, email or phone..." 
+            placeholder={t('dashboard.searchPatients')}
             className="pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <Button variant="outline" className="flex items-center gap-2">
-          <Filter size={18} /> Filter
+          <Filter size={18} /> {t('dashboard.filter')}
         </Button>
       </div>
 
@@ -70,11 +72,11 @@ export default function Patients() {
           <table className="w-full text-left">
             <thead className="bg-muted/50 text-xs uppercase text-muted-foreground font-semibold">
               <tr>
-                <th className="px-6 py-4">Patient Information</th>
-                <th className="px-6 py-4">Contact Details</th>
-                <th className="px-6 py-4">Registered Date</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">{t('dashboard.patientInformation')}</th>
+                <th className="px-6 py-4">{t('dashboard.contactDetails')}</th>
+                <th className="px-6 py-4">{t('dashboard.registeredDate')}</th>
+                <th className="px-6 py-4">{t('dashboard.status')}</th>
+                <th className="px-6 py-4 text-right">{t('dashboard.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -108,7 +110,7 @@ export default function Patients() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                      Active
+                      {t('dashboard.active')}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -119,9 +121,9 @@ export default function Patients() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="cursor-pointer">View Records</DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">Edit Profile</DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer text-destructive">Deactivate</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">{t('dashboard.viewRecords')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">{t('dashboard.editProfile')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer text-destructive">{t('dashboard.deactivate')}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -130,7 +132,7 @@ export default function Patients() {
               {filteredPatients.length === 0 && (
                 <tr>
                   <td colSpan="5" className="px-6 py-10 text-center text-muted-foreground">
-                    No patients found matching your search.
+                    {t('dashboard.noPatientsFound')}
                   </td>
                 </tr>
               )}
